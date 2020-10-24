@@ -79,17 +79,18 @@ public class LineItemController {
 		return li;	
 	}
 	
-	  private void recalculateTotal(int requestID) {
-		// get a list of line items 
-		List<LineItem> lines = lineItemRepo.findAllByRequestId(requestID);
-		// loop through list to get total
-		double total = 0.0;
+	// RecalculateTotal Method 
+	private void recalculateTotal(int requestId) {
+		List<LineItem> lines = lineItemRepo.findByRequestId(requestId);				// Get a list of line items 
+		
+		double total = 0.0;															// Loop thru list 
 		for (LineItem line : lines) {
-			Product p = line.getProduct();
-			total += p.getPrice()*line.getQuantity();
+			
+			total += (line.getProduct().getPrice()) * (line.getQuantity());			// Muliply the quantity of the product by the product price
+			
 		}
-		// save that total in the instance of request
-		Request r = requestRepo.findById(requestID).get();
+		
+		Request r = requestRepo.findById(requestId).get();							// Save that total 
 		r.setTotal(total);
 		requestRepo.save(r);
 	} 
