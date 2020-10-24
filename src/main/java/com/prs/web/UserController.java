@@ -27,8 +27,14 @@ public class UserController {
 	
 	// Login by username and password
 	@GetMapping("/{userName}/{passWord}")
-	public User findByUserNameAndPassword(@PathVariable String userName, @PathVariable String passWord) {
-		return userRepo.findByUserNameAndPassWord(userName, passWord);
+	public User getUserLogin(@PathVariable String userName, @PathVariable String passWord) {
+		User u = userRepo.findByUserNameAndPassWord(userName, passWord);
+		if (u!=null) {
+			return u;
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username and password not found");
+		}
 	} 
 	
 	// Get user by id
@@ -57,7 +63,7 @@ public class UserController {
 			return userRepo.save(u);
 		}
 		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor id does not match");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id does not match");
 		}
 	}
 	
@@ -69,7 +75,7 @@ public class UserController {
 			userRepo.deleteById(id);
 		}
 		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id does not found");
 		}
 		return u;	
 	}

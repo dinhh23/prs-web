@@ -1,3 +1,4 @@
+  
 package com.prs.web;
 
 import java.util.List;     
@@ -9,7 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.prs.business.LineItem;
+import com.prs.business.Product;
+import com.prs.business.Request;
 import com.prs.db.LineItemRepo;
+import com.prs.db.RequestRepo;
 
 
 @CrossOrigin
@@ -19,6 +23,9 @@ public class LineItemController {
 	
 	@Autowired
 	private LineItemRepo lineItemRepo;
+	
+	@Autowired
+	private RequestRepo requestRepo;
 	
 	// List all lineitem
 	@GetMapping("/")
@@ -42,7 +49,10 @@ public class LineItemController {
 	// Add a lineitem
 	@PostMapping("/")
 	public LineItem addLineItem(@RequestBody LineItem li) {
-		return lineItemRepo.save(li);
+		li = lineItemRepo.save(li);
+		recalculateTotal(li.getRequest().getId());
+		
+		return li;
 	}
 	
 	// Update a lineitem
@@ -68,5 +78,22 @@ public class LineItemController {
 		}
 		return li;	
 	}
+	
+	  private void recalculateTotal(int requestID) {
+		// get a list of line items 
+		List<LineItem> lines = lineItemRepo.findAllByRequestId(requestID);
+		// loop through list to get total
+		double total = 0.0;
+		for (LineItem line : lines) {
+			Product p = line.getProduct();
+			total += p.getPrice()*line.getQuantity();
+		}
+		// save that total in the instance of request
+		Request r = requestRepo.findById(requestID).get();
+		r.setTotal(total);
+		requestRepo.save(r);
+	} 
+	
+	
 	
 }
