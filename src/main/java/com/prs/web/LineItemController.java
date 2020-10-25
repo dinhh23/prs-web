@@ -50,8 +50,7 @@ public class LineItemController {
 	@PostMapping("/")
 	public LineItem addLineItem(@RequestBody LineItem li) {
 		li = lineItemRepo.save(li);
-		recalculateTotal(li.getRequest().getId());
-		
+		recalculateTotal(li.getRequest().getId());	
 		return li;
 	}
 	
@@ -59,7 +58,10 @@ public class LineItemController {
 	@PutMapping("/{id}")
 	public LineItem updateLineItem(@RequestBody LineItem li, @PathVariable int id) {
 		if (id == li.getId()) {
-			return lineItemRepo.save(li);
+			li = lineItemRepo.save(li);
+			recalculateTotal(li.getRequest().getId());
+			return li;
+			//return lineItemRepo.save(li);
 		}
 		else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem id does not match");
