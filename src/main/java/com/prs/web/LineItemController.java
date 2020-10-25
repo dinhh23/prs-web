@@ -74,8 +74,7 @@ public class LineItemController {
 		if (li.isPresent()) {
 			int requestId = li.get().getRequest().getId();
 			lineItemRepo.deleteById(id);
-			recalculateTotal(requestId);
-			
+			recalculateTotal(requestId);			
 		}
 		else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem id not found");
@@ -84,7 +83,7 @@ public class LineItemController {
 	}
 	
 	// RecalculateTotal Method 
-	private void recalculateTotal(int requestId) {
+	public void recalculateTotal(int requestId) {
 		List<LineItem> lines = lineItemRepo.findByRequestId(requestId);				// Get a list of line items 
 		
 		double total = 0.0;															// Loop thru list 
