@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.prs.business.LineItem;
-import com.prs.business.Product;
 import com.prs.business.Request;
 import com.prs.db.LineItemRepo;
 import com.prs.db.RequestRepo;
@@ -44,6 +43,12 @@ public class LineItemController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem id not found");
 		}
 		
+	}
+	
+	// Get all lineitem for a request id
+	@GetMapping("/for-req/{id}")
+	public List<LineItem> getLinesForPR(@PathVariable int id) {
+		return lineItemRepo.findByRequestId(id);
 	}
 	
 	// Add a lineitem
