@@ -41,7 +41,7 @@ public class LineItemController {
 			return li;
 		}
 		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem id not found");
 		}
 		
 	}
@@ -61,10 +61,9 @@ public class LineItemController {
 			li = lineItemRepo.save(li);
 			recalculateTotal(li.getRequest().getId());
 			return li;
-			//return lineItemRepo.save(li);
 		}
 		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem id does not match");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem & LineItem id does not match");
 		}
 	}
 	
@@ -73,10 +72,13 @@ public class LineItemController {
 	public Optional<LineItem> deleteLineItem(@PathVariable int id) {
 		Optional<LineItem> li = lineItemRepo.findById(id);
 		if (li.isPresent()) {
+			int requestId = li.get().getRequest().getId();
 			lineItemRepo.deleteById(id);
+			recalculateTotal(requestId);
+			
 		}
 		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem id not found");
 		}
 		return li;	
 	}
